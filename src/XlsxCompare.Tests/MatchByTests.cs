@@ -17,6 +17,8 @@ namespace XlsxCompare.Tests
         [DataRow(MatchBy.Date, "2021-04-01", "04/01/2021")]
         [DataRow(MatchBy.Date, "2021-04-01 4:00AM", "04/01/2021")]
         [DataRow(MatchBy.StringLeftStartsWithRight, "asdf", "as")]
+        [DataRow(MatchBy.ZeroRepresentsEmpty, "0", "")]
+        [DataRow(MatchBy.ZeroRepresentsEmpty, "", "0")]
         public void IsMatch_ThingsThatMatch_ReturnsTrue(MatchBy? match, string left, string right)
         {
             Assert.IsTrue(match.IsMatch(left, right));
@@ -25,11 +27,13 @@ namespace XlsxCompare.Tests
         [TestMethod]
         [DataRow(null, "a", "b")]
         [DataRow(MatchBy.String, "a", "b")]
+        [DataRow(MatchBy.String, "0", "1")]
         [DataRow(MatchBy.StringIgnoreMissingLeft, "a", "asdf")]
         [DataRow(MatchBy.Integer, "123", "124")]
         [DataRow(MatchBy.Date, "2021-04-01", "04/02/2021")]
         [DataRow(MatchBy.StringLeftStartsWithRight, "as", "asdf")]
         [DataRow(MatchBy.StringLeftStartsWithRight, "asdf", "")]
+        [DataRow(MatchBy.ZeroRepresentsEmpty, "0", "1")]
         public void IsMatch_ThingsThatDoNotMatch_ReturnsFalse(MatchBy? match, string left, string right)
         {
             Assert.IsFalse(match.IsMatch(left, right));

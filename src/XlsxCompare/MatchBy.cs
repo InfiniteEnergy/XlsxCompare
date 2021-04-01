@@ -9,7 +9,8 @@ namespace XlsxCompare
         StringIgnoreMissingLeft,
         Integer,
         Date,
-        StringLeftStartsWithRight
+        StringLeftStartsWithRight,
+        ZeroRepresentsEmpty
     }
 
     static class MatchByExtensions
@@ -17,6 +18,9 @@ namespace XlsxCompare
         public static bool IsMatch(this MatchBy? match, string left, string right)
             => match switch
             {
+                MatchBy.ZeroRepresentsEmpty => IsStringMatch(
+                    left == "0" ? "" : left,
+                    right == "0" ? "" : right),
                 MatchBy.Date => IsDateMatch(left, right),
                 MatchBy.Integer => IsIntegerMatch(left, right),
                 MatchBy.StringIgnoreMissingLeft => left.Length == 0 || IsStringMatch(left, right),
