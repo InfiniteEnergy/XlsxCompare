@@ -47,9 +47,5 @@ namespace XlsxCompare.Tests
         {
             Assert.IsFalse(assertion.IsMatch(left, right));
         }
-
-
-
-
     }
 }

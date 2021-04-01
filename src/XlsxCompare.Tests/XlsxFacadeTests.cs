@@ -10,7 +10,7 @@ namespace XlsxCompare.Tests
 
         [TestMethod]
         [DataRow("left.xlsx", "Sheet1", "A1:E4")]
-        [DataRow("right.xlsx", "DATA DUMP", "A1:F3")]
+        [DataRow("right.xlsx", "DATA DUMP", "A1:G4")]
         public void ToString_Various_ReflectsSheetAndSize(string path, string sheet, string range)
         {
             using var xlsx = XlsxFacade.Open(path);
