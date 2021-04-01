@@ -26,10 +26,10 @@ namespace XlsxCompare
             if (string.IsNullOrWhiteSpace(opts.LeftKeyColumn)) { throw new InvalidOperationException($"missing {nameof(LeftKeyColumn)}"); }
             if (string.IsNullOrWhiteSpace(opts.RightKeyColumn)) { throw new InvalidOperationException($"missing {nameof(RightKeyColumn)}"); }
             if (opts.Assertions == null || opts.Assertions.Count == 0) { throw new InvalidOperationException($"missing {nameof(Assertions)}"); }
-            foreach (var (left, right, matchBy) in opts.Assertions)
+            foreach (var assertion in opts.Assertions)
             {
-                if (string.IsNullOrWhiteSpace(left)) { throw new InvalidOperationException($"missing {nameof(Assertion.LeftColumnName)}"); }
-                if (string.IsNullOrWhiteSpace(right)) { throw new InvalidOperationException($"missing {nameof(Assertion.RightColumnName)}"); }
+                if (string.IsNullOrWhiteSpace(assertion.LeftColumnName)) { throw new InvalidOperationException($"missing {nameof(assertion.LeftColumnName)}"); }
+                if (string.IsNullOrWhiteSpace(assertion.RightColumnName)) { throw new InvalidOperationException($"missing {nameof(assertion.RightColumnName)}"); }
             }
 
             return opts;

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace XlsxCompare.Tests
@@ -53,6 +54,18 @@ namespace XlsxCompare.Tests
         {
             using var xlsx = XlsxFacade.Open("left.xlsx");
             xlsx.FindRow("id", "-1");
+        }
+
+        [TestMethod]
+        public void Rows_ReturnIndexesWithoutHeader()
+        {
+            using var xlsx = XlsxFacade.Open("left.xlsx");
+
+            var actual = xlsx.Rows.ToArray();
+
+            CollectionAssert.AreEqual(
+                new[] { 2, 3, 4 },
+                actual);
         }
     }
 }

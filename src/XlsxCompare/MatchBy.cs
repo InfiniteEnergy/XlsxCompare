@@ -1,7 +1,50 @@
+using System;
+
 namespace XlsxCompare
 {
-    enum MatchBy
+    public enum MatchBy
     {
         None = 0,
+        String,
+        StringIgnoreMissingLeft,
+        Integer,
+        Date,
+        StringLeftStartsWithRight,
+        ZeroRepresentsEmpty
+    }
+
+    static class MatchByExtensions
+    {
+        public static bool IsMatch(this MatchBy? match, string left, string right)
+            => match switch
+            {
+                MatchBy.ZeroRepresentsEmpty => IsStringMatch(
+                    left == "0" ? "" : left,
+                    right == "0" ? "" : right),
+                MatchBy.Date => IsDateMatch(left, right),
+                MatchBy.Integer => IsIntegerMatch(left, right),
+                MatchBy.StringIgnoreMissingLeft => left.Length == 0 || IsStringMatch(left, right),
+                MatchBy.StringLeftStartsWithRight => IsLeftStartsWithRightMatch(left, right),
+                _ => IsStringMatch(left, right),
+            };
+
+        private static bool IsStringMatch(string left, string right)
+            => left.Equals(right, StringComparison.OrdinalIgnoreCase);
+
+        private static bool IsIntegerMatch(string left, string right)
+            => IsStringMatch(left, right)
+                || (int.TryParse(left, out var leftInt)
+                    && int.TryParse(right, out var rightInt)
+                    && leftInt == rightInt);
+
+        private static bool IsDateMatch(string left, string right)
+            => IsStringMatch(left, right)
+                || (DateTime.TryParse(left, out var leftDate)
+                    && DateTime.TryParse(right, out var rightDate)
+                    && leftDate.Date == rightDate.Date);
+
+        private static bool IsLeftStartsWithRightMatch(string left, string right)
+            => right.Length > 0
+                && left.StartsWith(right, StringComparison.OrdinalIgnoreCase);
     }
 }

@@ -16,6 +16,7 @@ namespace XlsxCompare
         readonly IReadOnlyDictionary<string, int> _columnMap;
 
         private ExcelWorksheet Sheet => _excel.Workbook.Worksheets[0];
+        public IEnumerable<int> Rows => Enumerable.Range(2, Sheet.Dimension.Rows - 1);
 
         private XlsxFacade(FileInfo file)
         {
@@ -44,7 +45,7 @@ namespace XlsxCompare
 
         public int FindRow(string columnName, string value)
         {
-            foreach (var row in Enumerable.Range(2, Sheet.Dimension.Rows))
+            foreach (var row in Rows)
             {
                 var candidate = GetSafeValue(row, columnName);
                 if (value.Equals(candidate, StringComparison.OrdinalIgnoreCase))
