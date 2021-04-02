@@ -33,6 +33,7 @@ namespace XlsxCompare.Tests
                 new Assertion("leftCol", "rightCol", null),
                 new Assertion("leftCol2", "rightCol2", MatchBy.None)
             }, new ResultOptions(
+                "output.xlsx",
                 "left header",
                 "right header",
                 new[] { "a", "b" },
@@ -42,6 +43,7 @@ namespace XlsxCompare.Tests
                 'leftKeyColumn': 'leftKey',
                 'rightKeyColumn': 'rightKey',
                 'resultOptions': {
+                    'path': 'output.xlsx',
                     'leftValueHeader': 'left header',
                     'rightValueHeader': 'right header',
                     'leftColumnNames': ['a', 'b'],
@@ -62,6 +64,7 @@ namespace XlsxCompare.Tests
                 actual.Assertions.ToArray()
             );
 
+            Assert.AreEqual(expected.ResultOptions.Path, actual.ResultOptions.Path);
             Assert.AreEqual(expected.ResultOptions.LeftValueHeader, actual.ResultOptions.LeftValueHeader);
             Assert.AreEqual(expected.ResultOptions.RightValueHeader, actual.ResultOptions.RightValueHeader);
             CollectionAssert.AreEqual(
