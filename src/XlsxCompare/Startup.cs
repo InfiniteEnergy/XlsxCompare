@@ -14,7 +14,10 @@ namespace XlsxCompare
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHostedService<Driver>();
+            services.AddHostedService<Driver>()
+                .AddSingleton<XlsxComparer>()
+                .AddSingleton<ResultsWriter>()
+                ;
         }
     }
 }
