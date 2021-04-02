@@ -6,7 +6,13 @@ using System.Text.Json.Serialization;
 
 namespace XlsxCompare
 {
-    record CompareOptions(string LeftKeyColumn, string RightKeyColumn, IReadOnlyCollection<Assertion> Assertions)
+
+    record CompareOptions(
+        string LeftKeyColumn,
+        string RightKeyColumn,
+        IReadOnlyCollection<Assertion> Assertions,
+        ResultOptions ResultOptions
+        )
     {
         public static CompareOptions FromJsonFile(string path) => FromJson(File.ReadAllText(path));
 
@@ -31,6 +37,7 @@ namespace XlsxCompare
                 if (string.IsNullOrWhiteSpace(assertion.LeftColumnName)) { throw new InvalidOperationException($"missing {nameof(assertion.LeftColumnName)}"); }
                 if (string.IsNullOrWhiteSpace(assertion.RightColumnName)) { throw new InvalidOperationException($"missing {nameof(assertion.RightColumnName)}"); }
             }
+
 
             return opts;
         }
