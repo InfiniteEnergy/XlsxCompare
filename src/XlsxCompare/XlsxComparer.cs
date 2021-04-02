@@ -41,13 +41,25 @@ namespace XlsxCompare
 
                     if (!assertion.IsMatch(leftValue, rightValue))
                     {
-                        yield return new Mismatch(assertion, key, leftValue, rightValue);
+                        var leftContext = GetContext(left, leftRow, opts.ResultOptions.LeftColumnNames);
+                        var rightContext = GetContext(right, rightRow, opts.ResultOptions.RightColumnNames);
+                        var context = new Dictionary<string, string>(
+                            leftContext.Concat(rightContext));
+                        yield return new Mismatch(assertion, key, leftValue, rightValue, context);
                     }
                 }
             }
         }
 
+        private static IEnumerable<KeyValuePair<string, string>> GetContext(XlsxFacade xlsx, int row, IReadOnlyCollection<string>? columnNames)
+        {
+            if (columnNames == null) { yield break; }
+            foreach (var colName in columnNames)
+            {
+                yield return KeyValuePair.Create(
+                    colName,
+                    xlsx.GetSafeValue(row, colName));
+            }
+        }
     }
-
-
 }

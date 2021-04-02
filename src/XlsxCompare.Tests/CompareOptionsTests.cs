@@ -32,11 +32,21 @@ namespace XlsxCompare.Tests
             var expected = new CompareOptions("leftKey", "rightKey", new[]{
                 new Assertion("leftCol", "rightCol", null),
                 new Assertion("leftCol2", "rightCol2", MatchBy.None)
-            });
+            }, new ResultOptions(
+                "left header",
+                "right header",
+                new[] { "a", "b" },
+                new[] { "x", "y" }));
 
             var json = @"{
                 'leftKeyColumn': 'leftKey',
                 'rightKeyColumn': 'rightKey',
+                'resultOptions': {
+                    'leftValueHeader': 'left header',
+                    'rightValueHeader': 'right header',
+                    'leftColumnNames': ['a', 'b'],
+                    'rightColumnNames': ['x', 'y']
+                },
                 'assertions':[
                     {'LeftColumnName': 'leftCol', 'RightColumnName': 'rightCol'},
                     {'leftColumnName': 'leftCol2', 'rightColumnName': 'rightCol2', 'matchBy': 'none'}
@@ -44,11 +54,23 @@ namespace XlsxCompare.Tests
             }".Replace('\'', '"');
 
             var actual = CompareOptions.FromJson(json);
+
             Assert.AreEqual(expected.LeftKeyColumn, actual.LeftKeyColumn);
             Assert.AreEqual(expected.RightKeyColumn, actual.RightKeyColumn);
             CollectionAssert.AreEqual(
                 expected.Assertions.ToArray(),
                 actual.Assertions.ToArray()
+            );
+
+            Assert.AreEqual(expected.ResultOptions.LeftValueHeader, actual.ResultOptions.LeftValueHeader);
+            Assert.AreEqual(expected.ResultOptions.RightValueHeader, actual.ResultOptions.RightValueHeader);
+            CollectionAssert.AreEqual(
+                expected.ResultOptions.LeftColumnNames.ToArray(),
+                actual.ResultOptions.LeftColumnNames.ToArray()
+            );
+            CollectionAssert.AreEqual(
+                expected.ResultOptions.RightColumnNames.ToArray(),
+                actual.ResultOptions.RightColumnNames.ToArray()
             );
         }
     }
