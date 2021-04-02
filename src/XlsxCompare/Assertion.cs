@@ -4,19 +4,16 @@ namespace XlsxCompare
         string LeftColumnName,
         string RightColumnName,
         MatchBy? MatchBy = null,
-        string? Remove = null);
-
-    static class AssertionExtensions
+        string? Remove = null)
     {
-        public static bool IsMatch(this Assertion assertion, string left, string right)
+        public bool IsMatch(string left, string right)
         {
-            if (assertion.Remove != null)
+            if (Remove != null)
             {
-                left = left.Replace(assertion.Remove, "").Trim();
-                right = right.Replace(assertion.Remove, "").Trim();
+                left = left.Replace(Remove, "").Trim();
+                right = right.Replace(Remove, "").Trim();
             }
-            return assertion.MatchBy.IsMatch(left, right);
+            return MatchBy.IsMatch(left, right);
         }
-    }
-
+    };
 }
