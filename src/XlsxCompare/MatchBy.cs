@@ -11,8 +11,6 @@ namespace XlsxCompare
         Decimal,
         Date,
         StringLeftStartsWithRight,
-        ZeroRepresentsEmpty,
-        DecimalZeroRepresentsEmpty,
     }
 
     static class MatchByExtensions
@@ -20,8 +18,6 @@ namespace XlsxCompare
         public static bool IsMatch(this MatchBy? match, string left, string right)
             => match switch
             {
-                MatchBy.ZeroRepresentsEmpty => IsStringMatch(NormalizeZeroToEmpty(left), NormalizeZeroToEmpty(right)),
-                MatchBy.DecimalZeroRepresentsEmpty => IsDecimalMatch(NormalizeZeroToEmpty(left), NormalizeZeroToEmpty(right)),
                 MatchBy.Date => IsDateMatch(left, right),
                 MatchBy.Integer => IsIntegerMatch(left, right),
                 MatchBy.StringIgnoreMissingLeft => left.Length == 0 || IsStringMatch(left, right),
@@ -48,11 +44,6 @@ namespace XlsxCompare
         private static bool IsLeftStartsWithRightMatch(string left, string right)
             => right.Length > 0
                 && left.StartsWith(right, StringComparison.OrdinalIgnoreCase);
-
-        private static string NormalizeZeroToEmpty(string input)
-            => decimal.TryParse(input, out var parsed) && parsed == 0
-                ? ""
-                : input;
 
         private static bool IsDecimalMatch(string left, string right)
             => IsStringMatch(left, right)

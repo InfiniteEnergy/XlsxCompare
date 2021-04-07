@@ -19,6 +19,16 @@ namespace XlsxCompare.Tests
                 "a asdf",
                 "asdf a"
             };
+            yield return new object[]{
+                new Assertion("leftCol", "rightCol", ZeroRepresentsEmpty: true),
+                "0",
+                ""
+            };
+            yield return new object[]{
+                new Assertion("leftCol", "rightCol", ZeroRepresentsEmpty: true),
+                "",
+                "0.00"
+            };
         }
 
         [TestMethod]
@@ -39,6 +49,16 @@ namespace XlsxCompare.Tests
                 new Assertion("leftCol", "rightCol", Remove: "asdf"),
                 "a asdf",
                 "asdf b"
+            };
+            yield return new object[]{
+                new Assertion("leftCol", "rightCol", ZeroRepresentsEmpty: true),
+                "",
+                "0.001"
+            };
+            yield return new object[]{
+                new Assertion("leftCol", "rightCol", ZeroRepresentsEmpty: true),
+                "1",
+                "0"
             };
         }
         [TestMethod]
