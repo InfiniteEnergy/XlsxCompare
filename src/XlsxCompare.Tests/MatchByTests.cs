@@ -19,6 +19,10 @@ namespace XlsxCompare.Tests
         [DataRow(MatchBy.StringLeftStartsWithRight, "asdf", "as")]
         [DataRow(MatchBy.ZeroRepresentsEmpty, "0", "")]
         [DataRow(MatchBy.ZeroRepresentsEmpty, "", "0")]
+        [DataRow(MatchBy.ZeroRepresentsEmpty, "0.00", "")]
+        [DataRow(MatchBy.ZeroRepresentsEmpty, "", "0.00")]
+        [DataRow(MatchBy.Decimal, "0.084400", "0.0844")]
+        [DataRow(MatchBy.Decimal, "0.00", "0")]
         public void IsMatch_ThingsThatMatch_ReturnsTrue(MatchBy? match, string left, string right)
         {
             Assert.IsTrue(match.IsMatch(left, right));
@@ -34,6 +38,7 @@ namespace XlsxCompare.Tests
         [DataRow(MatchBy.StringLeftStartsWithRight, "as", "asdf")]
         [DataRow(MatchBy.StringLeftStartsWithRight, "asdf", "")]
         [DataRow(MatchBy.ZeroRepresentsEmpty, "0", "1")]
+        [DataRow(MatchBy.Decimal, "0.084400", "0.0845")]
         public void IsMatch_ThingsThatDoNotMatch_ReturnsFalse(MatchBy? match, string left, string right)
         {
             Assert.IsFalse(match.IsMatch(left, right));

@@ -8,9 +8,11 @@ namespace XlsxCompare
         String,
         StringIgnoreMissingLeft,
         Integer,
+        Decimal,
         Date,
         StringLeftStartsWithRight,
-        ZeroRepresentsEmpty
+        ZeroRepresentsEmpty,
+        DecimalZeroRepresentsEmpty,
     }
 
     static class MatchByExtensions
@@ -18,13 +20,13 @@ namespace XlsxCompare
         public static bool IsMatch(this MatchBy? match, string left, string right)
             => match switch
             {
-                MatchBy.ZeroRepresentsEmpty => IsStringMatch(
-                    left == "0" ? "" : left,
-                    right == "0" ? "" : right),
+                MatchBy.ZeroRepresentsEmpty => IsStringMatch(NormalizeZeroToEmpty(left), NormalizeZeroToEmpty(right)),
+                MatchBy.DecimalZeroRepresentsEmpty => IsDecimalMatch(NormalizeZeroToEmpty(left), NormalizeZeroToEmpty(right)),
                 MatchBy.Date => IsDateMatch(left, right),
                 MatchBy.Integer => IsIntegerMatch(left, right),
                 MatchBy.StringIgnoreMissingLeft => left.Length == 0 || IsStringMatch(left, right),
                 MatchBy.StringLeftStartsWithRight => IsLeftStartsWithRightMatch(left, right),
+                MatchBy.Decimal => IsDecimalMatch(left, right),
                 _ => IsStringMatch(left, right),
             };
 
@@ -46,5 +48,16 @@ namespace XlsxCompare
         private static bool IsLeftStartsWithRightMatch(string left, string right)
             => right.Length > 0
                 && left.StartsWith(right, StringComparison.OrdinalIgnoreCase);
+
+        private static string NormalizeZeroToEmpty(string input)
+            => decimal.TryParse(input, out var parsed) && parsed == 0
+                ? ""
+                : input;
+
+        private static bool IsDecimalMatch(string left, string right)
+            => IsStringMatch(left, right)
+                || (decimal.TryParse(left, out var leftInt)
+                    && decimal.TryParse(right, out var rightInt)
+                    && leftInt == rightInt);
     }
 }
