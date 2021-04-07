@@ -8,6 +8,7 @@ namespace XlsxCompare
         String,
         StringIgnoreMissingLeft,
         Integer,
+        Decimal,
         Date,
         StringLeftStartsWithRight,
         ZeroRepresentsEmpty
@@ -23,6 +24,7 @@ namespace XlsxCompare
                 MatchBy.Integer => IsIntegerMatch(left, right),
                 MatchBy.StringIgnoreMissingLeft => left.Length == 0 || IsStringMatch(left, right),
                 MatchBy.StringLeftStartsWithRight => IsLeftStartsWithRightMatch(left, right),
+                MatchBy.Decimal => IsDecimalMatch(left, right),
                 _ => IsStringMatch(left, right),
             };
 
@@ -49,5 +51,11 @@ namespace XlsxCompare
             => decimal.TryParse(input, out var parsed) && parsed == 0
                 ? ""
                 : input;
+
+        private static bool IsDecimalMatch(string left, string right)
+            => IsStringMatch(left, right)
+                || (decimal.TryParse(left, out var leftInt)
+                    && decimal.TryParse(right, out var rightInt)
+                    && leftInt == rightInt);
     }
 }
