@@ -18,9 +18,7 @@ namespace XlsxCompare
         public static bool IsMatch(this MatchBy? match, string left, string right)
             => match switch
             {
-                MatchBy.ZeroRepresentsEmpty => IsStringMatch(
-                    left == "0" ? "" : left,
-                    right == "0" ? "" : right),
+                MatchBy.ZeroRepresentsEmpty => IsStringMatch(NormalizeZeroToEmpty(left), NormalizeZeroToEmpty(right)),
                 MatchBy.Date => IsDateMatch(left, right),
                 MatchBy.Integer => IsIntegerMatch(left, right),
                 MatchBy.StringIgnoreMissingLeft => left.Length == 0 || IsStringMatch(left, right),
@@ -46,5 +44,10 @@ namespace XlsxCompare
         private static bool IsLeftStartsWithRightMatch(string left, string right)
             => right.Length > 0
                 && left.StartsWith(right, StringComparison.OrdinalIgnoreCase);
+
+        private static string NormalizeZeroToEmpty(string input)
+            => decimal.TryParse(input, out var parsed) && parsed == 0
+                ? ""
+                : input;
     }
 }

@@ -19,6 +19,8 @@ namespace XlsxCompare.Tests
         [DataRow(MatchBy.StringLeftStartsWithRight, "asdf", "as")]
         [DataRow(MatchBy.ZeroRepresentsEmpty, "0", "")]
         [DataRow(MatchBy.ZeroRepresentsEmpty, "", "0")]
+        [DataRow(MatchBy.ZeroRepresentsEmpty, "0.00", "")]
+        [DataRow(MatchBy.ZeroRepresentsEmpty, "", "0.00")]
         public void IsMatch_ThingsThatMatch_ReturnsTrue(MatchBy? match, string left, string right)
         {
             Assert.IsTrue(match.IsMatch(left, right));
