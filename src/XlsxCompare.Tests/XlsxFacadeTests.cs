@@ -39,21 +39,22 @@ namespace XlsxCompare.Tests
         [DataRow("Id", "3", 4)]
         [DataRow("email", "foo@example.com", 2)]
         [DataRow("address", "test", 2)]
-        public void FindRow_Exists_ReturnsRowIndex(string columnName, string value, int expected)
+        public void TryFindRow_Exists_ReturnsTrueAndRowIndex(string columnName, string value, int expected)
         {
             using var xlsx = XlsxFacade.Open("left.xlsx");
 
-            var actual = xlsx.FindRow(columnName, value);
+            var wasFound = xlsx.TryFindRow(columnName, value, out var actual);
 
+            Assert.IsTrue(wasFound);
             Assert.AreEqual(expected, actual);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(KeyNotFoundException))]
-        public void FindRow_DoesNotExist_Throws()
+        public void TryFindRow_DoesNotExist_ReturnsFalse()
         {
             using var xlsx = XlsxFacade.Open("left.xlsx");
-            xlsx.FindRow("id", "-1");
+            var wasFound = xlsx.TryFindRow("id", "-1", out var actual);
+            Assert.IsFalse(wasFound);
         }
 
         [TestMethod]

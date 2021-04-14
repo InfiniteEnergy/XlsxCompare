@@ -32,7 +32,11 @@ namespace XlsxCompare
             foreach (var leftRow in left.Rows)
             {
                 var key = left.GetSafeValue(leftRow, opts.LeftKeyColumn);
-                var rightRow = right.FindRow(opts.RightKeyColumn, key);
+                if (!right.TryFindRow(opts.RightKeyColumn, key, out var rightRow))
+                {
+                    if (opts.IgnoreMissingRows) { continue; }
+                    throw new KeyNotFoundException($"Could not find '{key}' in {opts.RightKeyColumn}");
+                }
 
                 foreach (var assertion in opts.Assertions)
                 {

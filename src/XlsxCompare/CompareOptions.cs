@@ -11,7 +11,8 @@ namespace XlsxCompare
         string LeftKeyColumn,
         string RightKeyColumn,
         IReadOnlyCollection<Assertion> Assertions,
-        ResultOptions ResultOptions
+        ResultOptions ResultOptions,
+        bool IgnoreMissingRows = false
         )
     {
         public static CompareOptions FromJsonFile(string path) => FromJson(File.ReadAllText(path));
@@ -37,7 +38,6 @@ namespace XlsxCompare
                 if (string.IsNullOrWhiteSpace(assertion.LeftColumnName)) { throw new InvalidOperationException($"missing {nameof(assertion.LeftColumnName)}"); }
                 if (string.IsNullOrWhiteSpace(assertion.RightColumnName)) { throw new InvalidOperationException($"missing {nameof(assertion.RightColumnName)}"); }
             }
-
 
             return opts;
         }
