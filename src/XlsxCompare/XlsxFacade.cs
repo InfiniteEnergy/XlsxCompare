@@ -43,17 +43,19 @@ namespace XlsxCompare
                 _ => value.Trim()
             };
 
-        public int FindRow(string columnName, string value)
+        public bool TryFindRow(string columnName, string value, out int foundRow)
         {
+            foundRow = -1;
             foreach (var row in Rows)
             {
                 var candidate = GetSafeValue(row, columnName);
                 if (value.Equals(candidate, StringComparison.OrdinalIgnoreCase))
                 {
-                    return row;
+                    foundRow = row;
+                    return true;
                 }
             }
-            throw new KeyNotFoundException($"Could not find '{value}' in {columnName}");
+            return false;
         }
 
         public void Dispose() => _excel.Dispose();
