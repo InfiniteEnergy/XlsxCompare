@@ -11,6 +11,7 @@ namespace XlsxCompare
         Decimal,
         Date,
         StringLeftStartsWithRight,
+        StringRightStartsWithLeft,
     }
 
     static class MatchByExtensions
@@ -22,6 +23,7 @@ namespace XlsxCompare
                 MatchBy.Integer => IsIntegerMatch(left, right),
                 MatchBy.StringIgnoreMissingLeft => left.Length == 0 || IsStringMatch(left, right),
                 MatchBy.StringLeftStartsWithRight => IsLeftStartsWithRightMatch(left, right),
+                MatchBy.StringRightStartsWithLeft => IsLeftStartsWithRightMatch(right, left),
                 MatchBy.Decimal => IsDecimalMatch(left, right),
                 _ => IsStringMatch(left, right),
             };
