@@ -17,7 +17,7 @@ for each cell that didn't match.
 
 ## Usage
 
-You can download a pre-built binary from the [latest release](releases/latest).
+You can download a pre-built binary from the [latest release](/InfiniteEnergy/XlsxCompare/releases/latest).
 
 ```console
 $ ./XlsxCompare config.json left.xlsx right.xlsx
