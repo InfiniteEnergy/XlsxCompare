@@ -28,8 +28,8 @@ jobs:
       matrix:
         rid:
           - win-x64
+          - linux-x64
           # TODO: uncomment before finishing experiments
-          # - linux-x64
           # - osx-x64
     steps:
       - uses: actions/checkout@v2
@@ -38,11 +38,13 @@ jobs:
           dotnet-version: "5.0.x"
       - name: Create the self-contained binary
         run: dotnet publish --configuration Release "${APP}" -r ${{ matrix.rid }} -o out/${{ matrix.rid }} --self-contained true
+      - name: rename to include rid
+        run: cp out/${{ matrix.rid }}/XlsxCompare XlsxCompare-${{ matrix.rid }} || cp out/${{ matrix.rid }}/XlsxCompare.exe XlsxCompare-${{ matrix.rid }}.exe .
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.rid }} binary
-          path: out/${{ matrix.rid }}/*
+          path: XlsxCompare*
 
   release:
     needs: binaries
@@ -62,4 +64,4 @@ jobs:
           automatic_release_tag: "testing"
           prerelease: false
           files: |
-            out/**/*
+            XlsxCompare*
