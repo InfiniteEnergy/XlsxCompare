@@ -8,7 +8,6 @@
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <PublishSingleFile>true</PublishSingleFile>
-    <SelfContained>true</SelfContained>
     <PublishTrimmed>true</PublishTrimmed>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
     <DebugType>embedded</DebugType>
