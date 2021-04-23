@@ -1,7 +1,6 @@
 name: Release
 
 on:
-  pull_request:
   push:
     tags:
       - "v*"
@@ -10,18 +9,18 @@ env:
   APP: "./src/XlsxCompare"
 
 jobs:
-  # verify_commit:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
-  #     - name: Verify commit exists in origin/main
-  #       run: |
-  #         git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
-  #         git branch --remote --contains | grep origin/main
+  verify_commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Verify commit exists in origin/main
+        run: |
+          git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
+          git branch --remote --contains | grep origin/main
 
   binaries:
-    #    needs: verify_commit
+    needs: verify_commit
     runs-on: ubuntu-latest
     name: create standalone binaries
     strategy:
@@ -29,8 +28,7 @@ jobs:
         rid:
           - win-x64
           - linux-x64
-          # TODO: uncomment before finishing experiments
-          # - osx-x64
+          - osx-x64
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-dotnet@v1
@@ -38,7 +36,7 @@ jobs:
           dotnet-version: "5.0.x"
       - name: Create the self-contained binary
         run: dotnet publish --configuration Release "${APP}" -r ${{ matrix.rid }} -o out/${{ matrix.rid }} --self-contained true
-      - name: rename to include rid
+      - name: rename so the release can have a flat list of files
         run: cp out/${{ matrix.rid }}/XlsxCompare XlsxCompare-${{ matrix.rid }} || cp out/${{ matrix.rid }}/XlsxCompare.exe XlsxCompare-${{ matrix.rid }}.exe
       - name: Upload artifact
         uses: actions/upload-artifact@v2
@@ -52,14 +50,9 @@ jobs:
     steps:
       - name: download all binaries
         uses: actions/download-artifact@v2
-      - name: Display structure of downloaded files
-        run: ls -R
       - uses: "marvinpinto/action-automatic-releases@v1.1.1"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          draft: true
-          title: "testing ${{ github.run_id }}"
-          automatic_release_tag: "testing"
           prerelease: false
           files: |
             **/XlsxCompare*
