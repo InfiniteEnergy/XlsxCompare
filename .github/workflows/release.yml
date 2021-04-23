@@ -39,7 +39,7 @@ jobs:
       - name: Create the self-contained binary
         run: dotnet publish --configuration Release "${APP}" -r ${{ matrix.rid }} -o out/${{ matrix.rid }} --self-contained true
       - name: rename to include rid
-        run: cp out/${{ matrix.rid }}/XlsxCompare XlsxCompare-${{ matrix.rid }} || cp out/${{ matrix.rid }}/XlsxCompare.exe XlsxCompare-${{ matrix.rid }}.exe .
+        run: cp out/${{ matrix.rid }}/XlsxCompare XlsxCompare-${{ matrix.rid }} || cp out/${{ matrix.rid }}/XlsxCompare.exe XlsxCompare-${{ matrix.rid }}.exe
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
