@@ -59,6 +59,7 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           draft: true
           title: "testing ${{ github.run_id }}"
+          automatic_release_tag: "testing"
           prerelease: false
           files: |
             out/**/*
