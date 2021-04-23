@@ -24,26 +24,3 @@ jobs:
           project_path: ${{ env.SLN }}
           set_check_status_from_test_outcome: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
-  binaries:
-    needs: build
-    runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/main' }}
-    name: create standalone binaries
-    strategy:
-      matrix:
-        rid:
-          - win-x64
-          - linux-x64
-          - osx-x64
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: "5.0.x"
-      - name: Create the self-contained binary
-        run: dotnet build --configuration Release "${APP}" -r ${{ matrix.rid }} -o out/${{ matrix.rid }}
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ matrix.rid }} binary
-          path: out/${{ matrix.rid }}/*
