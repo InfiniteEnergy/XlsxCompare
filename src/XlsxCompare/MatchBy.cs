@@ -44,8 +44,12 @@ namespace XlsxCompare
                     && leftDate.Date == rightDate.Date);
 
         private static bool IsLeftStartsWithRightMatch(string left, string right)
-            => right.Length > 0
-                && left.StartsWith(right, StringComparison.OrdinalIgnoreCase);
+            => (left, right) switch
+            {
+                ("", "") => true, // both empty is a match
+                (_, "") => false, // left starting with empty doesn't count
+                (_, _) => left.StartsWith(right, StringComparison.OrdinalIgnoreCase),
+            };
 
         private static bool IsDecimalMatch(string left, string right)
             => IsStringMatch(left, right)

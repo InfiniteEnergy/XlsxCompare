@@ -17,9 +17,11 @@ namespace XlsxCompare.Tests
         [DataRow(MatchBy.Date, "2021-04-01", "04/01/2021")]
         [DataRow(MatchBy.Date, "2021-04-01 4:00AM", "04/01/2021")]
         [DataRow(MatchBy.StringLeftStartsWithRight, "asdf", "as")]
+        [DataRow(MatchBy.StringLeftStartsWithRight, "", "")]
         [DataRow(MatchBy.Decimal, "0.084400", "0.0844")]
         [DataRow(MatchBy.Decimal, "0.00", "0")]
         [DataRow(MatchBy.StringRightStartsWithLeft, "asdf", "asdf and then some")]
+        [DataRow(MatchBy.StringRightStartsWithLeft, "", "")]
         public void IsMatch_ThingsThatMatch_ReturnsTrue(MatchBy? match, string left, string right)
         {
             Assert.IsTrue(match.IsMatch(left, right));
