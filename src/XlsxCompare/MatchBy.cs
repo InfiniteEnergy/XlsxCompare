@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace XlsxCompare
 {
@@ -12,6 +14,7 @@ namespace XlsxCompare
         Date,
         StringLeftStartsWithRight,
         StringRightStartsWithLeft,
+        Tokens,
     }
 
     static class MatchByExtensions
@@ -25,6 +28,7 @@ namespace XlsxCompare
                 MatchBy.StringLeftStartsWithRight => IsLeftStartsWithRightMatch(left, right),
                 MatchBy.StringRightStartsWithLeft => IsLeftStartsWithRightMatch(right, left),
                 MatchBy.Decimal => IsDecimalMatch(left, right),
+                MatchBy.Tokens => IsTokenMatch(left, right),
                 _ => IsStringMatch(left, right),
             };
 
@@ -56,5 +60,14 @@ namespace XlsxCompare
                 || (decimal.TryParse(left, out var leftInt)
                     && decimal.TryParse(right, out var rightInt)
                     && leftInt == rightInt);
+
+        private static bool IsTokenMatch(string left, string right)
+            => IsTokenMatch(Tokenize(left), Tokenize(right));
+
+        private static bool IsTokenMatch(IEnumerable<string> left, IEnumerable<string> right)
+            => !left.Except(right, StringComparer.OrdinalIgnoreCase).Any();
+
+        private static IEnumerable<string> Tokenize(string value)
+            => value.Split(' ').Select(x => x.Trim());
     }
 }

@@ -127,6 +127,7 @@ This config will:
 |`date`|parse as dates before comparison|`2021-04-02` matches `20210402` and `4/2/2021 3:45PM`, but not `2021-04-03`|
 |`stringLeftStartsWithRight`|the left value must start with the right value|`testing` matches `test`, but not `testing with suffix`|
 |`stringRightStartsWithLeft`|the right value must start with the left value|`test` matches `testing`|
+|`tokens`|each value must contain the same tokens, after splitting on whitespace. This is useful for addresses that have the same components in a different order, or other data where the ordering is insignificant|`1234 S Main St` matches `1234  Main St S`|
 
 ## Developing
 
