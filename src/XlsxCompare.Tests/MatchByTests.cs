@@ -25,6 +25,7 @@ namespace XlsxCompare.Tests
         [DataRow(MatchBy.Tokens, "X Y", "Y X")]
         [DataRow(MatchBy.Tokens, "X Y Z", "  Z X   Y")]
         [DataRow(MatchBy.Tokens, "", "")]
+        [DataRow(MatchBy.Tokens, "X  Y Z", "X Y Z")]
         public void IsMatch_ThingsThatMatch_ReturnsTrue(MatchBy? match, string left, string right)
         {
             Assert.IsTrue(match.IsMatch(left, right));
@@ -44,6 +45,7 @@ namespace XlsxCompare.Tests
         [DataRow(MatchBy.StringRightStartsWithLeft, "asdf but no", "asdf and then some")]
         [DataRow(MatchBy.Tokens, "X Y", "Y Z")]
         [DataRow(MatchBy.Tokens, "X", "  ")]
+        [DataRow(MatchBy.Tokens, "X Y Z", "X Y Z AA")]
         public void IsMatch_ThingsThatDoNotMatch_ReturnsFalse(MatchBy? match, string left, string right)
         {
             Assert.IsFalse(match.IsMatch(left, right));

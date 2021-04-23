@@ -62,12 +62,11 @@ namespace XlsxCompare
                     && leftInt == rightInt);
 
         private static bool IsTokenMatch(string left, string right)
-            => IsTokenMatch(Tokenize(left), Tokenize(right));
+            => Tokenize(left).SetEquals(Tokenize(right));
 
-        private static bool IsTokenMatch(IEnumerable<string> left, IEnumerable<string> right)
-            => !left.Except(right, StringComparer.OrdinalIgnoreCase).Any();
-
-        private static IEnumerable<string> Tokenize(string value)
-            => value.Split(' ').Select(x => x.Trim());
+        private static ISet<string> Tokenize(string value)
+            => new HashSet<string>(
+                value.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
+                StringComparer.OrdinalIgnoreCase);
     }
 }
