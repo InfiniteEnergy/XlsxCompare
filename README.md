@@ -115,6 +115,7 @@ This config will:
 |`matchBy`|how to compare the two values, see `matchBy` below|`string`|
 |`remove`|if present: before comparison, remove this string from both values|`null`|
 |`zeroRepresentsEmpty`|if true: before comparison, convert any zero values (e.g. `0`, `0.0`) to empty string|`false`|
+|`synonyms`|if present: this is a nested list of terms that should be treated as identical. For example, with these synonyms: `[ ["street", "st"], ["n", "north"] ]`, then `123 North Main St` will match `123 N Main Street`|`null`|
 
 ### `matchBy` options
 
