@@ -61,5 +61,55 @@ namespace XlsxCompare.Tests
                 Assert.AreEqual(expectedContext[id], newId);
             }
         }
+
+        [TestMethod]
+        public void Compare_NoJoinMatchesWithContext_ReturnsMissingDataAsMismatch()
+        {
+            var opts = new CompareOptions(
+                LeftKeyColumn: "id",
+                RightKeyColumn: "new_id",
+                new[]{
+                    new Assertion("Email", "EML")
+                },
+                new ResultOptions(
+                    LeftColumnNames: new[] { "Name" }
+                )
+            );
+            var results = _comparer.Compare("left.xlsx", "right.xlsx", opts);
+
+            Assert.AreEqual(3, results.TotalCellMismatches);
+            Assert.AreEqual(3, results.TotalRowMismatches);
+
+            var expectedContext = new Dictionary<string, string>(){
+                {"1", "leading trailing spaces"},
+                {"2", "null email"},
+                {"3", "whitespace address"}
+            };
+
+            foreach (var mismatch in results.Mismatches)
+            {
+                var id = mismatch.Key;
+                var name = mismatch.Context["Name"];
+                Assert.AreEqual(expectedContext[id], name);
+            }
+        }
+
+        [TestMethod]
+        public void Compare_NoJoinMatchesWithIgnoringMissingRows_ReturnsNoMismatches()
+        {
+            var opts = new CompareOptions(
+                LeftKeyColumn: "id",
+                RightKeyColumn: "new_id",
+                Assertions: new[]{
+                    new Assertion("Email", "EML")
+                },
+                ResultOptions: new ResultOptions(),
+                IgnoreMissingRows: true
+            );
+            var results = _comparer.Compare("left.xlsx", "right.xlsx", opts);
+
+            Assert.AreEqual(0, results.TotalCellMismatches);
+            Assert.AreEqual(0, results.TotalRowMismatches);
+        }
     }
 }

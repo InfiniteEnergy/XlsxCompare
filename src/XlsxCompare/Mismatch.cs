@@ -6,7 +6,7 @@ namespace XlsxCompare
         Assertion Assertion,
         string Key,
         string LeftValue,
-        string RightValue,
+        string? RightValue,
         IReadOnlyDictionary<string, string> Context
     );
 }

@@ -29,13 +29,22 @@ namespace XlsxCompare
         private IEnumerable<Mismatch> Compare(XlsxFacade left, XlsxFacade right, CompareOptions opts)
         {
             _logger.LogInformation("Comparing {LeftXlsx} to {RightXlsx}", left, right);
+            var joinAssertion = new Assertion(opts.LeftKeyColumn, opts.RightKeyColumn);
             foreach (var leftRow in left.Rows)
             {
                 var key = left.GetSafeValue(leftRow, opts.LeftKeyColumn);
+                var leftContext = new Dictionary<string, string>(GetContext(left, leftRow, opts.ResultOptions.LeftColumnNames));
                 if (!right.TryFindRow(opts.RightKeyColumn, key, out var rightRow))
                 {
                     if (opts.IgnoreMissingRows) { continue; }
-                    throw new KeyNotFoundException($"Could not find '{key}' in {opts.RightKeyColumn}");
+                    yield return new Mismatch(
+                        Assertion: joinAssertion,
+                        Key: key,
+                        LeftValue: key,
+                        RightValue: null,
+                        Context: leftContext
+                    );
+                    continue;
                 }
 
                 foreach (var assertion in opts.Assertions)
@@ -45,7 +54,6 @@ namespace XlsxCompare
 
                     if (!assertion.IsMatch(leftValue, rightValue))
                     {
-                        var leftContext = GetContext(left, leftRow, opts.ResultOptions.LeftColumnNames);
                         var rightContext = GetContext(right, rightRow, opts.ResultOptions.RightColumnNames);
                         var context = new Dictionary<string, string>(
                             leftContext.Concat(rightContext));

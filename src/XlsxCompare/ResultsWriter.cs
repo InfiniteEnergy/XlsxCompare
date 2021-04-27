@@ -57,11 +57,11 @@ namespace XlsxCompare
             yield return opts.RightValueHeader;
         }
 
-        private static IEnumerable<string> GetValues(ResultOptions opts, Mismatch mismatch)
+        private static IEnumerable<string?> GetValues(ResultOptions opts, Mismatch mismatch)
         {
             foreach (var col in opts.ContextColumnNames)
             {
-                yield return mismatch.Context[col];
+                yield return mismatch.Context.GetValueOrDefault(col);
             }
             yield return mismatch.Assertion.LeftColumnName;
             // TODO: maybe format?
@@ -69,7 +69,7 @@ namespace XlsxCompare
             yield return mismatch.RightValue;
         }
 
-        private static void WriteRow(ExcelWorksheet sheet, int row, IEnumerable<string> values)
+        private static void WriteRow(ExcelWorksheet sheet, int row, IEnumerable<string?> values)
         {
             var col = 1;
             foreach (var value in values)
