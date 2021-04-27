@@ -29,6 +29,20 @@ namespace XlsxCompare.Tests
                 "",
                 "0.00"
             };
+            yield return new object[]{
+                new Assertion("leftCol", "rightCol",
+                    MatchBy: MatchBy.Tokens,
+                    Synonyms: new[]{new HashSet<string>(new[]{"rd", "Road"})}),
+                "1234\tFOO\tROAD\tS\t# 123A",
+                "1234 S Foo Rd # 123A"
+            };
+
+            yield return new object[]{
+                new Assertion("leftCol", "rightCol",
+                    Synonyms: new[]{new HashSet<string>(new[]{"suite", " ste"})}),
+                "Suite 2",
+                "Ste 2"
+            };
         }
 
         [TestMethod]
@@ -59,6 +73,11 @@ namespace XlsxCompare.Tests
                 new Assertion("leftCol", "rightCol", ZeroRepresentsEmpty: true),
                 "1",
                 "0"
+            };
+            yield return new object[]{
+                new Assertion("leftCol", "rightCol", Synonyms: new[]{new HashSet<string>(new[]{"rd", "road"})}),
+                "foord",
+                "fooroad"
             };
         }
         [TestMethod]
