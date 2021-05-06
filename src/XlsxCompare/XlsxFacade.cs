@@ -68,21 +68,34 @@ namespace XlsxCompare
         public static XlsxFacade Open(string path)
         {
             var file = new FileInfo(path);
+            if (!".xlsx".Equals(file.Extension, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new NotSupportedException($"Cannot process {path}, only xlsx files are supported");
+            }
             if (!file.Exists) { throw new FileNotFoundException("Could not open xlsx", file.FullName); }
             return new XlsxFacade(file);
         }
 
-        static IReadOnlyDictionary<string, int> BuildColumnMap(ExcelWorksheet sheet)
-            => Enumerable.Range(1, sheet.Dimension.Columns)
+        IReadOnlyDictionary<string, int> BuildColumnMap(ExcelWorksheet sheet)
+        {
+            var result = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            var headers = Enumerable.Range(1, sheet.Dimension.Columns)
                 .Select(index => new
                 {
                     index,
-                    header = sheet.Cells[1, index].Value?.ToString()
+                    name = sheet.Cells[1, index].Value?.ToString()?.Trim()
                 })
-                .Where(x => x.header != null)
-                .ToDictionary(
-                    x => x.header!.Trim(),
-                    x => x.index,
-                    StringComparer.OrdinalIgnoreCase);
+                .Where(x => x.name != null);
+
+            foreach (var header in headers)
+            {
+                if (result.ContainsKey(header.name!))
+                {
+                    throw new ArgumentException($"Failed to open {_excel.File}, column headers must be unique. {_excel.File} contains duplicate column header '{header.name}'.");
+                }
+                result.Add(header.name!, header.index);
+            }
+            return result;
+        }
     }
 }

@@ -13,6 +13,7 @@ namespace XlsxCompare
                 .CreateDefaultBuilder(args)
                 .ConfigureLogging(builder =>
                 {
+                    builder.AddFilter("Microsoft", LogLevel.Warning);
                     builder.AddSimpleConsole(opts =>
                     {
                         opts.TimestampFormat = "[HH:mm:ss] ";
