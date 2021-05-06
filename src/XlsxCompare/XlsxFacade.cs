@@ -12,7 +12,6 @@ namespace XlsxCompare
     /// </summary>
     sealed class XlsxFacade : IDisposable
     {
-        const string DuplicateKeyPrefix = "An item with the same key has already been added. Key: ";
         readonly ExcelPackage _excel;
         readonly IReadOnlyDictionary<string, int> _columnMap;
 
@@ -22,15 +21,7 @@ namespace XlsxCompare
         private XlsxFacade(FileInfo file)
         {
             _excel = new ExcelPackage(file);
-            try
-            {
-                _columnMap = BuildColumnMap(Sheet);
-            }
-            catch (ArgumentException ae) when (ae.Message.StartsWith(DuplicateKeyPrefix, StringComparison.OrdinalIgnoreCase))
-            {
-                var badKey = ae.Message.Replace(DuplicateKeyPrefix, "", StringComparison.OrdinalIgnoreCase);
-                throw new ArgumentException($"Failed to open {file}, column headers must be unique. {file} contains duplicate column header '{badKey}'.", ae);
-            }
+            _columnMap = BuildColumnMap(Sheet);
         }
 
         /// <summary>
@@ -85,17 +76,26 @@ namespace XlsxCompare
             return new XlsxFacade(file);
         }
 
-        static IReadOnlyDictionary<string, int> BuildColumnMap(ExcelWorksheet sheet)
-            => Enumerable.Range(1, sheet.Dimension.Columns)
+        IReadOnlyDictionary<string, int> BuildColumnMap(ExcelWorksheet sheet)
+        {
+            var result = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            var headers = Enumerable.Range(1, sheet.Dimension.Columns)
                 .Select(index => new
                 {
                     index,
-                    header = sheet.Cells[1, index].Value?.ToString()
+                    name = sheet.Cells[1, index].Value?.ToString()?.Trim()
                 })
-                .Where(x => x.header != null)
-                .ToDictionary(
-                    x => x.header!.Trim(),
-                    x => x.index,
-                    StringComparer.OrdinalIgnoreCase);
+                .Where(x => x.name != null);
+
+            foreach (var header in headers)
+            {
+                if (result.ContainsKey(header.name!))
+                {
+                    throw new ArgumentException($"Failed to open {_excel.File}, column headers must be unique. {_excel.File} contains duplicate column header '{header.name}'.");
+                }
+                result.Add(header.name!, header.index);
+            }
+            return result;
+        }
     }
 }
