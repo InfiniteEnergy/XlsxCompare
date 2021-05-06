@@ -19,7 +19,22 @@ namespace XlsxCompare
         public void Write(CompareResult results, ResultOptions opts)
         {
             _logger.LogInformation("Writing results to {Path}", opts.Path);
-            File.Delete(opts.Path);
+
+            try
+            {
+                File.Delete(opts.Path);
+            }
+            catch (IOException ioe) when (ioe.Message.Contains("used by another process", StringComparison.OrdinalIgnoreCase))
+            {
+                _logger.LogWarning("Unable to write to {Path}, trying again with a unique suffix", opts.Path);
+                var newOpts = opts with
+                {
+                    Path = opts.Path.Replace(".xlsx", $"_{DateTime.Now:yyyyMMdd'T'HHmm}.xlsx")
+                };
+                Write(results, newOpts);
+                return;
+            }
+
             using var xlsx = new ExcelPackage(new FileInfo(opts.Path));
             ExcelWorksheet sheet = xlsx.Workbook.Worksheets.Add("Sheet1")
                 ?? throw new InvalidOperationException("unable to add a sheet");
