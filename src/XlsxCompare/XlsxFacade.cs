@@ -68,6 +68,10 @@ namespace XlsxCompare
         public static XlsxFacade Open(string path)
         {
             var file = new FileInfo(path);
+            if (!".xlsx".Equals(file.Extension, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new NotSupportedException($"Cannot process {path}, only xlsx files are supported");
+            }
             if (!file.Exists) { throw new FileNotFoundException("Could not open xlsx", file.FullName); }
             return new XlsxFacade(file);
         }

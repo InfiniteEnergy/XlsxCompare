@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -7,6 +8,15 @@ namespace XlsxCompare.Tests
     [TestClass]
     public class XlsxFacadeTests
     {
+
+        [TestMethod]
+        [DataRow("sheet.xls")]
+        [DataRow("sheet.csv")]
+        [ExpectedException(typeof(NotSupportedException))]
+        public void Open_NotAXlsxFile_Throws(string path)
+        {
+            XlsxFacade.Open(path);
+        }
 
         [TestMethod]
         [DataRow("left.xlsx", "Sheet1", "A1:E4")]
