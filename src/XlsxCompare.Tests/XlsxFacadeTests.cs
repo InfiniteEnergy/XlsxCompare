@@ -10,6 +10,15 @@ namespace XlsxCompare.Tests
     {
 
         [TestMethod]
+        public void Open_XlsxWithDuplicateColumns_Throws()
+        {
+            var ex = Assert.ThrowsException<ArgumentException>(() => XlsxFacade.Open("duplicate-columns.xlsx"));
+
+            StringAssert.Contains(ex.Message, "'repeated column'");
+            StringAssert.Contains(ex.Message, "duplicate-columns.xlsx");
+        }
+
+        [TestMethod]
         [DataRow("sheet.xls")]
         [DataRow("sheet.csv")]
         [ExpectedException(typeof(NotSupportedException))]

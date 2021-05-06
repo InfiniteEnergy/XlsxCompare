@@ -12,6 +12,7 @@ namespace XlsxCompare
     /// </summary>
     sealed class XlsxFacade : IDisposable
     {
+        const string DuplicateKeyPrefix = "An item with the same key has already been added. Key: ";
         readonly ExcelPackage _excel;
         readonly IReadOnlyDictionary<string, int> _columnMap;
 
@@ -21,7 +22,15 @@ namespace XlsxCompare
         private XlsxFacade(FileInfo file)
         {
             _excel = new ExcelPackage(file);
-            _columnMap = BuildColumnMap(Sheet);
+            try
+            {
+                _columnMap = BuildColumnMap(Sheet);
+            }
+            catch (ArgumentException ae) when (ae.Message.StartsWith(DuplicateKeyPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                var badKey = ae.Message.Replace(DuplicateKeyPrefix, "", StringComparison.OrdinalIgnoreCase);
+                throw new ArgumentException($"Failed to open {file}, column headers must be unique. {file} contains duplicate column header '{badKey}'.", ae);
+            }
         }
 
         /// <summary>
